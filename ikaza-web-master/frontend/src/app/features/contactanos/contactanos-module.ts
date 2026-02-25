@@ -5,10 +5,9 @@ import { FormsModule } from '@angular/forms'; // Importa FormsModule para el for
 import { ContactanosComponent } from './contactanos/contactanos';
 import { ContactChannels } from './contact-channels/contact-channels';
 import { LocationMap } from './location-map/location-map';
-import { ContactForm } from './contact-form/contact-form';
 
 @NgModule({
-  declarations: [], // <-- DEJA ESTE ARREGLO VACÍO
-  imports: [CommonModule, FormsModule, ContactanosComponent, ContactChannels, LocationMap, ContactForm]
+  declarations: [], 
+  imports: [CommonModule, FormsModule, ContactanosComponent, ContactChannels, LocationMap]
 })
 export class ContactanosModule { }
