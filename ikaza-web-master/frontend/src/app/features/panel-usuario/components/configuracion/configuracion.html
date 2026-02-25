@@ -1,0 +1,257 @@
+<div class="container-fluid p-4">
+    <h1 class="h3 fw-bold text-dark mb-4">Configuración de Cuenta</h1>
+
+    <!-- Sección 1: Selección de Icono y Avatar -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-person-badge me-2"></i>
+                Avatar del Perfil
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 text-center">
+                    <div class="avatar-preview mb-3">
+                        <div
+                            class="avatar-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto">
+                            <i *ngIf="!profileImage" [class]="'fs-1 ' + selectedIcon"></i>
+                            <img *ngIf="profileImage" [src]="profileImage" alt="Profile"
+                                class="rounded-circle w-100 h-100">
+                        </div>
+                    </div>
+
+                    <!-- Botones para imagen -->
+                    <div class="mb-3">
+                        <input type="file" id="profileImageInput" class="d-none" accept="image/*"
+                            placeholder="Ingresa imagen" (change)="onImageSelected($event)">
+                        <button type="button" class="btn btn-outline-primary btn-sm me-2"
+                            onclick="document.getElementById('profileImageInput').click()">
+                            <i class="bi bi-upload"></i> Subir Foto
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm" *ngIf="profileImage"
+                            aria-label="Remover Imagen" (click)="removeProfileImage()">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+
+                    <!-- NUEVO: Botón para guardar avatar -->
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-success w-100 fw-bold"
+                            [disabled]="isLoadingAvatar || (!hasAvatarChanges())" (click)="guardarAvatar()">
+                            <span *ngIf="isLoadingAvatar" class="spinner-border spinner-border-sm me-2"></span>
+                            {{ isLoadingAvatar ? 'Guardando...' : 'Guardar Avatar' }}
+                        </button>
+                        <small class="text-muted d-block mt-2" *ngIf="hasAvatarChanges()">
+                            <i class="bi bi-info-circle"></i> Tienes cambios sin guardar
+                        </small>
+                    </div>
+                </div>
+
+                <div class="col-md-9">
+                    <h6 class="text-muted mb-3">Elige un icono por defecto:</h6>
+                    <div class="icon-grid">
+                        <div class="row g-2">
+                            <div class="col-2" *ngFor="let icon of availableIcons">
+                                <button type="button" class="btn icon-option w-100 p-2" aria-label="Seleccionar Icono"
+                                    [class.btn-primary]="selectedIcon === icon.class"
+                                    [class.btn-outline-secondary]="selectedIcon !== icon.class"
+                                    (click)="selectIcon(icon.class)" [title]="icon.name">
+                                    <i [class]="'fs-4 ' + icon.class"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        El icono se mostrará solo si no has subido una foto de perfil.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 2: Información Personal (Nombre de Cuenta) -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-person-lines-fill me-2"></i>
+                Información Personal
+            </h5>
+        </div>
+        <div class="card-body">
+            <form [formGroup]="perfilForm" (ngSubmit)="guardarPerfil()" class="row g-3">
+                <div class="col-12">
+                    <label for="displayName" class="form-label">Nombre de la cuenta</label>
+                    <input type="text" class="form-control" id="displayName" formControlName="displayName"
+                        [class.is-invalid]="isFieldInvalid(perfilForm, 'displayName')"
+                        placeholder="Mi nombre de usuario">
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid(perfilForm, 'displayName')">
+                        {{ getFieldError(perfilForm, 'displayName') }}
+                    </div>
+                    <small class="form-text text-muted">
+                        Este nombre se mostrará en tu perfil y será visible para otros usuarios.
+                    </small>
+                </div>
+
+                <div class="col-12 d-flex justify-content-end pt-3">
+                    <button type="submit" class="btn btn-primary px-4 fw-bold"
+                        [disabled]="perfilForm.invalid || isLoadingProfile">
+                        <span *ngIf="isLoadingProfile" class="spinner-border spinner-border-sm me-2"></span>
+                        {{ isLoadingProfile ? 'Guardando...' : 'Guardar cambios' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sección 3: Verificación de Correo -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-envelope-check me-2"></i>
+                Verificación de Correo
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <p class="mb-0">
+                    Estado:
+                    <span class="badge" [class.bg-success]="isEmailVerified" [class.bg-danger]="!isEmailVerified">
+                        {{ isEmailVerified ? 'Verificado' : 'Pendiente' }}
+                    </span>
+                </p>
+
+                <ng-container *ngIf="!isEmailVerified">
+                    <button type="button" class="btn btn-sm btn-outline-primary fw-bold"
+                        (click)="sendEmailVerificationCode()" [disabled]="isSendingEmailCode">
+                        <span *ngIf="isSendingEmailCode" class="spinner-border spinner-border-sm me-2"></span>
+                        {{ isSendingEmailCode ? 'Enviando...' : 'Enviar Código' }}
+                    </button>
+                </ng-container>
+            </div>
+
+            <!-- Formulario de verificación de código de email -->
+            <ng-container *ngIf="!isEmailVerified && emailCodeSent">
+                <form [formGroup]="emailVerificationForm" (ngSubmit)="verifyEmailCode()" class="row g-3">
+                    <div class="col-md-8">
+                        <input type="text" formControlName="verificationCode" class="form-control"
+                            placeholder="Ingresa el código (6 dígitos)"
+                            [class.is-invalid]="isFieldInvalid(emailVerificationForm, 'verificationCode')">
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid(emailVerificationForm, 'verificationCode')">
+                            {{ getFieldError(emailVerificationForm, 'verificationCode') }}
+                        </div>
+                        <small class="form-text text-muted">Revisa tu bandeja de entrada y spam.</small>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-success w-100"
+                            [disabled]="emailVerificationForm.invalid || isVerifyingEmail">
+                            <span *ngIf="isVerifyingEmail" class="spinner-border spinner-border-sm me-2"></span>
+                            {{ isVerifyingEmail ? 'Verificando...' : 'Verificar Email' }}
+                        </button>
+                    </div>
+                </form>
+            </ng-container>
+        </div>
+    </div>
+
+    <!-- Sección 4: Verificacion de telefono -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-phone me-2"></i>
+                Verificación de Teléfono
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label">Número guardado</label>
+                <!-- Mostrar el teléfono completo del formulario, que se actualizó en loadUserData -->
+                <input type="text" [value]="userPhone" class="form-control" aria-label="Verificar telefono" disabled>
+            </div>
+
+            <ng-container *ngIf="!isPhoneVerified">
+                <button *ngIf="!phoneCodeSent" class="btn btn-warning mb-3 fw-bold"
+                    (click)="sendPhoneVerificationCode()" [disabled]="isSendingPhoneCode">
+                    <span *ngIf="isSendingPhoneCode" class="spinner-border spinner-border-sm me-2"></span>
+                    {{ isSendingPhoneCode ? 'Enviando código...' : 'Enviar Código SMS' }}
+                </button>
+
+                <div *ngIf="phoneCodeSent" [formGroup]="phoneVerificationForm">
+                    <div class="mb-3">
+                        <label for="phoneVerificationCode" class="form-label">Código SMS (6 dígitos)</label>
+                        <input type="text" formControlName="verificationCode" id="phoneVerificationCode"
+                            class="form-control" placeholder="Ingresa el código">
+                    </div>
+                    <button class="btn btn-success fw-bold" (click)="verifyPhoneCode()" [disabled]="isVerifyingPhone">
+                        <span *ngIf="isVerifyingPhone" class="spinner-border spinner-border-sm me-2"></span>
+                        {{ isVerifyingPhone ? 'Verificando...' : 'Verificar Teléfono' }}
+                    </button>
+                </div>
+            </ng-container>
+            <div *ngIf="isPhoneVerified" class="alert alert-success mt-3">
+                <i class="bi bi-check-circle-fill"></i> Teléfono verificado.
+            </div>
+            <small class="form-text text-muted d-block mt-2">
+                Asegúrate de haber guardado tu teléfono en la sección "Datos Personales" para poder verificarlo.
+            </small>
+        </div>
+    </div>
+
+    <!-- Sección 5: Cambio de Contraseña -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-shield-lock me-2"></i>
+                Seguridad
+            </h5>
+        </div>
+        <div class="card-body">
+            <form [formGroup]="passwordForm" (ngSubmit)="cambiarPassword()" class="row g-3">
+                <div class="col-12">
+                    <label for="currentPassword" class="form-label">Contraseña actual</label>
+                    <input type="password" class="form-control" id="currentPassword" formControlName="currentPassword"
+                        [class.is-invalid]="isFieldInvalid(passwordForm, 'currentPassword')"
+                        placeholder="Tu contraseña actual">
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid(passwordForm, 'currentPassword')">
+                        {{ getFieldError(passwordForm, 'currentPassword') }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="newPassword" class="form-label">Nueva contraseña</label>
+                    <input type="password" class="form-control" id="newPassword" formControlName="newPassword"
+                        [class.is-invalid]="isFieldInvalid(passwordForm, 'newPassword')" placeholder="Nueva contraseña">
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid(passwordForm, 'newPassword')">
+                        {{ getFieldError(passwordForm, 'newPassword') }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="confirmPassword" class="form-label">Confirmar nueva contraseña</label>
+                    <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword"
+                        [class.is-invalid]="isFieldInvalid(passwordForm, 'confirmPassword')"
+                        placeholder="Confirma tu nueva contraseña">
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid(passwordForm, 'confirmPassword')">
+                        {{ getFieldError(passwordForm, 'confirmPassword') }}
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <small class="form-text text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        La contraseña debe tener al menos 6 caracteres. Se recomienda usar una combinación de letras,
+                        números y símbolos.
+                    </small>
+                </div>
+
+                <div class="col-12 d-flex justify-content-end pt-3">
+                    <button type="submit" class="btn btn-warning px-4 fw-bold"
+                        [disabled]="passwordForm.invalid || isLoadingPassword">
+                        <span *ngIf="isLoadingPassword" class="spinner-border spinner-border-sm me-2"></span>
+                        {{ isLoadingPassword ? 'Cambiando...' : 'Cambiar contraseña' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

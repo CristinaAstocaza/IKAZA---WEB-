@@ -1,0 +1,280 @@
+/* Reset y contenedor principal */
+.modal-backdrop * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", "Segoe UI", sans-serif; 
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(10, 20, 40, 0.75);
+  -webkit-backdrop-filter: blur(6px); /* efecto vidrio */
+  backdrop-filter: blur(6px);
+  z-index: 999;
+  overflow-y: auto;
+}
+
+/* Contenido principal del modal */
+.modal-backdrop .modal-content {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  width: 90%;
+  max-width: 800px;
+  max-height: 100vh;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.5s ease;
+}
+
+/* Animación suave de aparición */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Botón de cierre */
+.modal-backdrop .close {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  font-size: 26px;
+  cursor: pointer;
+  color: #3b4d6b;
+  transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.modal-backdrop .close:hover {
+  transform: scale(1.2);
+  color: #1a2a4a;
+}
+
+/* Contenedor de formularios */
+.modal-backdrop .container {
+  display: flex;
+  position: relative;
+  min-height: 500px;
+  transition: all 0.6s ease-in-out;
+}
+
+/* Formularios */
+.modal-backdrop .form-container {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  transition: all 0.6s ease-in-out;
+}
+
+.modal-backdrop .sign-in-container {
+  left: 0;
+  z-index: 2;
+}
+
+.modal-backdrop .sign-up-container {
+  left: 0;
+  opacity: 0;
+  z-index: 1;
+}
+
+.modal-backdrop .container.right-panel-active .sign-up-container {
+  transform: translateX(100%);
+  opacity: 1;
+  z-index: 5;
+}
+
+.modal-backdrop .container.right-panel-active .sign-in-container {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+/* Estilo de formularios */
+.modal-backdrop form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  padding: 0 50px;
+  color: #1a2a4a;
+}
+
+.modal-backdrop h1 {
+  font-size: 30px;
+  font-weight: 600;
+  color: #12386e;
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+}
+
+.modal-backdrop input {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0;
+  font-size: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #cdd7e0;
+  border-radius: 10px;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.modal-backdrop input:focus {
+  border-color: #4a8de6;
+  box-shadow: 0 0 8px rgba(74, 141, 230, 0.3);
+  outline: none;
+}
+
+.modal-backdrop input::placeholder {
+  color: #777;
+}
+
+/* Botones */
+.modal-backdrop button {
+  border: none;
+  border-radius: 30px;
+  padding: 12px 45px;
+  margin-top: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+  background: linear-gradient(135deg, #4a8de6, #3266a8);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-backdrop button:hover {
+  background: linear-gradient(135deg, #3266a8, #4a8de6);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(50, 102, 168, 0.3);
+}
+
+.modal-backdrop .ghost {
+  background: transparent;
+  border: 2px solid #3266a8;
+  color: #3266a8;
+  font-weight: 500;
+}
+
+.modal-backdrop .ghost:hover {
+  background: #3266a8;
+  color: #fff;
+}
+
+/* Overlay */
+.modal-backdrop .overlay-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 100;
+  transition: transform 0.6s ease-in-out;
+}
+
+.modal-backdrop .container.right-panel-active .overlay-container {
+  transform: translateX(-100%);
+}
+
+.modal-backdrop .overlay {
+  position: relative;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(to right, #a6c7f0, #8eb7ea);
+  color: #fff;
+  transform: translateX(0);
+  transition: transform 0.6s ease-in-out;
+}
+
+.modal-backdrop .container.right-panel-active .overlay {
+  transform: translateX(50%);
+}
+
+.modal-backdrop .overlay-panel {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  padding: 0 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.6s ease-in-out;
+}
+
+.modal-backdrop .overlay-left {
+  transform: translateX(-20%);
+}
+
+.modal-backdrop .container.right-panel-active .overlay-left {
+  transform: translateX(0);
+}
+
+.modal-backdrop .overlay-right {
+  right: 0;
+  transform: translateX(0);
+}
+
+.modal-backdrop .container.right-panel-active .overlay-right {
+  transform: translateX(20%);
+}
+
+/* Fondo con imagen */
+.overlay-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.overlay-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  opacity: 0.75;
+  filter: brightness(0.85);
+  transition: transform 1.5s ease, opacity 1s ease;
+}
+
+.overlay-panel:hover .overlay-bg {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.overlay-panel h1,
+.overlay-panel p {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+/* Grupo de botones */
+.modal-backdrop .button-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-backdrop .button-group button {
+  flex: 1 1 auto;
+  min-width: 100px;
+}

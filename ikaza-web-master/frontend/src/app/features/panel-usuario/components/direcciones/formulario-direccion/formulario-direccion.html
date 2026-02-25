@@ -1,0 +1,83 @@
+<form [formGroup]="direccionForm" (ngSubmit)="onSubmit()" class="card p-4 mb-3">
+    <h5 class="mb-4">{{ editMode ? 'Editar Dirección' : 'Nueva Dirección' }}</h5>
+
+    <!-- MÉTODO 3: Formulario Manual -->
+    <h6 class="mb-3 text-muted">Completa o edita los datos manualmente</h6>
+
+    <!-- Alias -->
+    <div class="mb-3">
+        <label for="input-alias" class="form-label">Alias *</label>
+        <input type="text" id="input-alias" formControlName="alias" class="form-control"
+            placeholder="Ej: Casa, Oficina, Casa de mamá"
+            [class.is-invalid]="direccionForm.get('alias')?.invalid && direccionForm.get('alias')?.touched">
+        <div class="invalid-feedback">El alias es requerido</div>
+    </div>
+
+    <!-- Dirección Específica -->
+    <div class="mb-3">
+        <label for="input-direccion" class="form-label">Dirección Específica *</label>
+        <input type="text" id="input-direccion" formControlName="direccion" class="form-control"
+            placeholder="Calle y número"
+            [class.is-invalid]="direccionForm.get('direccion')?.invalid && direccionForm.get('direccion')?.touched">
+        <div class="invalid-feedback">La dirección específica es obligatoria</div>
+    </div>
+
+    <!-- Ubicación -->
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="input-pais" class="form-label">País *</label>
+            <input type="text" id="input-pais" formControlName="pais" class="form-control" placeholder="País"
+                [class.is-invalid]="direccionForm.get('pais')?.invalid && direccionForm.get('pais')?.touched">
+            <div class="invalid-feedback">El país es requerido</div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label for="input-region" class="form-label">Región/Departamento *</label>
+            <input type="text" id="input-region" formControlName="region" class="form-control"
+                placeholder="Departamento"
+                [class.is-invalid]="direccionForm.get('region')?.invalid && direccionForm.get('region')?.touched">
+            <div class="invalid-feedback">La región es requerida</div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label for="input-provincia" class="form-label">Provincia *</label>
+            <input type="text" id="input-provincia" formControlName="provincia" class="form-control"
+                placeholder="Provincia"
+                [class.is-invalid]="direccionForm.get('provincia')?.invalid && direccionForm.get('provincia')?.touched">
+            <div class="invalid-feedback">La provincia es requerida</div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label for="input-distrito" class="form-label">Distrito *</label>
+            <input type="text" id="input-distrito" formControlName="distrito" class="form-control"
+                placeholder="Distrito"
+                [class.is-invalid]="direccionForm.get('distrito')?.invalid && direccionForm.get('distrito')?.touched">
+            <div class="invalid-feedback">El distrito es requerido</div>
+        </div>
+    </div>
+
+    <!-- Código Postal -->
+    <div class="mb-3">
+        <label for="input-codigo-postal" class="form-label">Código Postal</label>
+        <input type="text" id="input-codigo-postal" formControlName="codigoPostal" class="form-control" maxlength="10"
+            placeholder="Código postal">
+    </div>
+
+    <!-- Referencia -->
+    <div class="mb-3">
+        <label for="input-referencia" class="form-label">Referencia</label>
+        <textarea id="input-referencia" formControlName="referencia" class="form-control" rows="2"
+            placeholder="Ej: Frente al parque, casa de dos pisos color azul"></textarea>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="d-flex gap-2 mt-3">
+        <button type="submit" [disabled]="isLoading || direccionForm.invalid" class="btn btn-success">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+            {{ editMode ? 'Guardar cambios' : 'Guardar dirección' }}
+        </button>
+        <button type="button" (click)="onCancelar.emit()" class="btn btn-secondary" [disabled]="isLoading">
+            Cancelar
+        </button>
+    </div>
+</form>
